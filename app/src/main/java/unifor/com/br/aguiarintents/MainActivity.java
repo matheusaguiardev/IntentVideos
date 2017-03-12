@@ -1,22 +1,27 @@
 package unifor.com.br.aguiarintents;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Path;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.MediaController;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button makeVideoButton;
     Button galeryButton;
     Button playVideoButton;
+    TextView feedTextView;
+    VideoView videoView;
 
+    ImageButton playButton;
     Uri uriCaminho;
 
     static final int REQUEST_VIDEO_CAPTURE = 1;
@@ -33,9 +38,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         galeryButton = (Button) findViewById(R.id.ver_galeria);
         playVideoButton = (Button) findViewById(R.id.play_video);
 
+        playButton = (ImageButton) findViewById(R.id.play_video_local);
+
+        videoView = (VideoView) findViewById(R.id.videoView);
+
+        feedTextView = (TextView) findViewById(R.id.feed_video);
+
         makeVideoButton.setOnClickListener(this);
         galeryButton.setOnClickListener(this);
         playVideoButton.setOnClickListener(this);
+
+        playButton.setOnClickListener(this);
+
     }
 
     @Override
@@ -53,9 +67,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (uriCaminho != null) {
                     playVideo(uriCaminho);
                 } else {
+                    feedTextView.setText("Nenhum video selecionado");
                     Toast.makeText(this, "Você ainda não gravou nenhum video.", Toast.LENGTH_SHORT).show();
                 }
+                break;
+            case R.id.play_video_local:
 
+                if (!videoView.isPlaying()) {
+
+                    if (uriCaminho != null) {
+                        MediaController mediaController = new
+                                MediaController(this);
+                        mediaController.setAnchorView(videoView);
+                        videoView.setMediaController(mediaController);
+                        playButton.setImageResource(android.R.drawable.ic_media_play);
+                        videoView.setVideoURI(uriCaminho);
+                        videoView.start();
+                    }
+                } else {
+                    videoView.pause();
+                    playButton.setImageResource(android.R.drawable.ic_media_pause);
+                }
                 break;
         }
     }
@@ -103,6 +135,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
 
+        }
+        if (uriCaminho != null) {
+            feedTextView.setText(uriCaminho.getPath());
+        } else {
+            feedTextView.setText("Nenhum video carregado !");
         }
     }
 }
