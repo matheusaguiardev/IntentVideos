@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     Toast.makeText(this, "Você ainda não gravou nenhum video.", Toast.LENGTH_SHORT).show();
                 }
+
                 break;
         }
     }
